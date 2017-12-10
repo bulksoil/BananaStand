@@ -1,4 +1,4 @@
-# BananaStand
+# :banana:BananaStand:banana:
 
 No, BananaStand doesn't stand for anything, except bananas.
 
