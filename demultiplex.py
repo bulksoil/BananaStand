@@ -3,6 +3,7 @@
 import sys
 import optparse
 import gzip
+import os
 
 def opt_get():
 	parser = optparse.OptionParser()
@@ -12,6 +13,7 @@ def opt_get():
 	parser.add_option('-m', '--MAP', dest = "map", action = "store")
 	parser.add_option('--I1', dest = "index1", action = "store")
 	parser.add_option('--I2', dest = "index2", action = "store")
+	parser.add_option('-a', '--algorithm', dest = "pipeline", action = "store", default = "qiime")
 	(options, args) = parser.parse_args()
 	return(options)
 
@@ -23,6 +25,11 @@ index1_f = options.index1
 index2_f = options.index2
 read1_f = options.r1
 read2_f = options.r2
+pipeline = options.pipeline.lower()
+
+## Check if pipeline is valid
+if not pipeline in ["qiime", "dada2"]
+	sys.exit('[ERROR] Do not recognize pipeline ' + pipeline. "\n Valid options are dada2 and qiime.")
 
 ## Read in barcodes for samples from the mapping file
 print "Scanning barcodes..."
@@ -41,22 +48,13 @@ while True:
 inp.close()
 print "Found " + str(len(sample_barcodes)) + " barcodes."
 
-## Prepare outfiles
-r1_g_name = prefix + "_R1_grouped.fq"
-r2_g_name = prefix + "_R2_grouped.fq"
-group_name = prefix + '_groups.txt'
-sc_name = prefix + '_sample_counts.txt'
-
 ## Read fq files
 print "Demultiplexing..."
 i1 = gzip.open(index1_f, 'rb')
 i2 = gzip.open(index2_f, 'rb' )
 r1 = gzip.open(read1_f, 'rb')
 r2 = gzip.open(read2_f, 'rb')
-r1o = open(r1_g_name, 'wb')
-r2o = open(r2_g_name, 'wb')
-groups = open(group_name, 'wb')
-sc = open(sc_name, 'w')
+
 
 found = 0
 sample_counts = {}
@@ -88,47 +86,116 @@ def complement(s):
 def revcom(s):
     return(complement(s[::-1]))
 
+if options.pipeline == "qiime":
 
-# bc_arg = 'concat_fq.pl -f ' + read3 + ' -r ' + read2 + ' > ' + barcodeFile
+	
+	## Prepare outfiles
+	r1_g_name = prefix + "_R1_grouped.fq"
+	r2_g_name = prefix + "_R2_grouped.fq"
+	group_name = prefix + '_groups.txt'
+	sc_name = prefix + '_sample_counts.txt'
+	
+	groups = open(group_name, 'wb')
+	sc = open(sc_name, 'w')
+	r1o = open(r1_g_name, 'wb')
+	r2o = open(r2_g_name, 'wb')
 
-while True:
-	i1_dat = fq_read(i1)
-	i2_dat = fq_read(i2)
-	r1_dat = fq_read(r1)
-	r2_dat = fq_read(r2)
+	while True:
+		i1_dat = fq_read(i1)
+		i2_dat = fq_read(i2)
+		r1_dat = fq_read(r1)
+		r2_dat = fq_read(r2)
 
-	if not i1_dat['header']:
-		break
+		if not i1_dat['header']:
+			break
 
-	if(header_match(i1_dat['header'], i2_dat['header'], r1_dat['header'], r2_dat['header']) == 0):
-		sys.exit('[ERROR] Headers do not match.')
+		if(header_match(i1_dat['header'], i2_dat['header'], r1_dat['header'], r2_dat['header']) == 0):
+			sys.exit('[ERROR] Headers do not match.')
 
-	#bc = i2_dat['seq'] + revcom(i1_dat['seq'])
-	bc = i2_dat['seq'] + revcom(i1_dat['seq'])
+		#bc = i2_dat['seq'] + revcom(i1_dat['seq'])
+		bc = i2_dat['seq'] + revcom(i1_dat['seq'])
 
-	if bc in sample_barcodes:
-		found += 1
-		sample = sample_barcodes[bc]
-		if found % 100 == 0:
-			sys.stdout.write('%s\r' % found)
-    		sys.stdout.flush()
+		if bc in sample_barcodes:
+			found += 1
+			sample = sample_barcodes[bc]
+			if found % 100 == 0:
+				sys.stdout.write('%s\r' % found)
+    			sys.stdout.flush()
 		
-		if sample in sample_counts:
-			sample_counts[sample] += 1
-		else:
-			sample_counts[sample] = 1
+			if sample in sample_counts:
+				sample_counts[sample] += 1
+			else:
+				sample_counts[sample] = 1
 		
-		groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
-		r1o.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
-		r2o.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
+			groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
+			r1o.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
+			r2o.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
 
-i1.close()
-i2.close()
-r1.close()
-r2.close()
-r1o.close()
-r2o.close()
-groups.close()
+	i1.close()
+	i2.close()
+	r1.close()
+	r2.close()
+	r1o.close()
+	r2o.close()
+	groups.close()
+
+else:
+
+	group_name = prefix + '_groups.txt'
+	sc_name = prefix + '_sample_counts.txt'
+	
+	groups = open(group_name, 'wb')
+	sc = open(sc_name, 'w')
+
+	if not os.path.exists("FWD"):
+    	os.makedirs("FWD")
+
+    if not os.path.exists("RVS"):
+    	os.makedirs("RVS")
+
+	filehandles_FWD = {}
+	filehandles_RVS = {}
+
+	while True:
+		i1_dat = fq_read(i1)
+		i2_dat = fq_read(i2)
+		r1_dat = fq_read(r1)
+		r2_dat = fq_read(r2)
+
+		if not i1_dat['header']:
+			break
+
+		if(header_match(i1_dat['header'], i2_dat['header'], r1_dat['header'], r2_dat['header']) == 0):
+			sys.exit('[ERROR] Headers do not match.')
+
+		bc = i2_dat['seq'] + revcom(i1_dat['seq'])
+
+		if bc in sample_barcodes:
+			found += 1
+			sample = sample_barcodes[bc]
+
+			if sample not in filehandles_FWD:
+				out_name = sample + "_.fastq"
+				filehandles_FWD[sample] = open("FWD/" + out_name, 'w')
+				filehandles_RVS[sample] = open("RVS/" + out_name, 'w')
+
+
+			if found % 100 == 0:
+				sys.stdout.write('%s\r' % found)
+    			sys.stdout.flush()
+		
+			if sample in sample_counts:
+				sample_counts[sample] += 1
+			else:
+				sample_counts[sample] = 1
+		
+			groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
+			filehandles_FWD[sample].write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
+			filehandles_RVS[sample].write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
+	for sample in filehandles_RVS:
+		filehandles_FWD[sample].close()
+		filehandles_RVS[sample].close()
+
 
 for sample in sample_counts:
 	sc.write(sample + "\t" + str(sample_counts[sample]) + "\n")

@@ -12,6 +12,7 @@ parser.add_option('--read1', dest = "read1", action = "store", default = "R1.fq"
 parser.add_option('--read2', dest = "read2", action = "store", default = "R2.fq")
 parser.add_option('--read3', dest = "read3", action = "store", default = "R3.fq")
 parser.add_option('--read4', dest = "read4", action = "store", default = "R4.fq")
+parser.add_option('-a', '--algorithm', dest = "pipeline", action = "store", default = "qiime")
 parser.add_option('--max_length', dest = "max_length", action = "store", type = "int", default = 275)
 
 options, args = parser.parse_args()
@@ -23,14 +24,18 @@ read3 = options.read3
 read4 = options.read4
 mapFile = options.map
 prefix = options.prefix
+pipeline = options.pipeline
 max_length = options.max_length
 
 ## Demultiplex
 groupFile = prefix + "_groups.txt"
-dm_arg = 'demultiplex.py -m ' + mapFile + ' -f ' + read1 + ' -r ' + read4 + ' --I1 ' + read2 + ' --I2 ' + read3 + ' -p ' + prefix
+dm_arg = 'demultiplex.py -m ' + mapFile + ' -f ' + read1 + ' -r ' + read4 + ' --I1 ' + read2 + ' --I2 ' + read3 + ' -p ' + prefix + ' -a ' + pipeline
 print '[STATUS] Executing argument "' + dm_arg + '"'
 print "Writing results to " + groupFile
 os.system(dm_arg)
+
+if pipeline.lower() == "dada2":
+	sys.exit("Done")
 
 ## Grouping Read1
 #r1_name = re.sub('\.f.*', '', read1)
