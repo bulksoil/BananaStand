@@ -154,6 +154,9 @@ else:
 		os.makedirs("RVS")
 
 	while True:
+
+		fh = {}
+
 		i1_dat = fq_read(i1)
 		i2_dat = fq_read(i2)
 		r1_dat = fq_read(r1)
@@ -173,9 +176,13 @@ else:
 
 			out_name = sample + ".fastq"
 			
-			fwd_file = open("FWD/" + out_name, 'w')
-			rvs_file = open("RVS/" + out_name, 'w')
-
+			if not sample in fh:
+				fwd_file = open("FWD/" + out_name, 'w')
+				rvs_file = open("RVS/" + out_name, 'w')
+				fh[sample] = 1
+			else:
+				fwd_file = open("FWD/" + out_name, 'a')
+				rvs_file = open("RVS/" + out_name, 'a')
 
 			if found % 100 == 0:
 				sys.stdout.write('%s\r' % found)
