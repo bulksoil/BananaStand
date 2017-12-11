@@ -28,7 +28,7 @@ read2_f = options.r2
 pipeline = options.pipeline.lower()
 
 ## Check if pipeline is valid
-if not pipeline in ["qiime", "dada2"]
+if not pipeline in ["qiime", "dada2"]:
 	sys.exit('[ERROR] Do not recognize pipeline ' + pipeline. "\n Valid options are dada2 and qiime.")
 
 ## Read in barcodes for samples from the mapping file
