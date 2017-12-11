@@ -153,9 +153,6 @@ else:
 	if not os.path.exists("RVS"):
 		os.makedirs("RVS")
 
-	filehandles_FWD = {}
-	filehandles_RVS = {}
-
 	while True:
 		i1_dat = fq_read(i1)
 		i2_dat = fq_read(i2)
@@ -190,8 +187,8 @@ else:
 				sample_counts[sample] = 1
 		
 			groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
-			filehandles_FWD[sample].write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
-			filehandles_RVS[sample].write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
+			fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
+			rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
 
 			fwd_file.close()
 			rvs_file.close()
