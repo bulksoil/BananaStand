@@ -148,10 +148,10 @@ else:
 	sc = open(sc_name, 'w')
 
 	if not os.path.exists("FWD"):
-    	os.makedirs("FWD")
+		os.makedirs("FWD")
 
-    if not os.path.exists("RVS"):
-    	os.makedirs("RVS")
+	if not os.path.exists("RVS"):
+		os.makedirs("RVS")
 
 	filehandles_FWD = {}
 	filehandles_RVS = {}
@@ -174,10 +174,9 @@ else:
 			found += 1
 			sample = sample_barcodes[bc]
 
-			if sample not in filehandles_FWD:
-				out_name = sample + "_.fastq"
-				filehandles_FWD[sample] = open("FWD/" + out_name, 'w')
-				filehandles_RVS[sample] = open("RVS/" + out_name, 'w')
+			
+			fwd_file = open("FWD/" + out_name, 'w')
+			rvs_file = open("RVS/" + out_name, 'w')
 
 
 			if found % 100 == 0:
@@ -192,9 +191,9 @@ else:
 			groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
 			filehandles_FWD[sample].write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
 			filehandles_RVS[sample].write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
-	for sample in filehandles_RVS:
-		filehandles_FWD[sample].close()
-		filehandles_RVS[sample].close()
+
+			fwd_file.close()
+			rvs_file.close()
 
 
 for sample in sample_counts:
