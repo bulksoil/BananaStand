@@ -174,6 +174,7 @@ else:
 			found += 1
 			sample = sample_barcodes[bc]
 
+			out_name = sample + ".fastq"
 			
 			fwd_file = open("FWD/" + out_name, 'w')
 			rvs_file = open("RVS/" + out_name, 'w')
