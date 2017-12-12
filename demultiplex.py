@@ -176,14 +176,6 @@ else:
 			sample = sample_barcodes[bc]
 
 			out_name = sample + ".fastq"
-			
-			#if not sample in fh:
-			#	fwd_file = open("FWD/" + out_name, 'w')
-			#	rvs_file = open("RVS/" + out_name, 'w')
-			#	fh[sample] = 1
-			#else:
-			#	fwd_file = open("FWD/" + out_name, 'a')
-			#	rvs_file = open("RVS/" + out_name, 'a')
 
 			if found % 100 == 0:
 				sys.stdout.write('%s\r' % found)
@@ -205,7 +197,7 @@ else:
 				rvs_file.close()
 				
 			else:
-				
+
 				fh[sample] = 1
 				with open("FWD/" + out_name, 'w') as fwd_file:
 					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
@@ -214,10 +206,7 @@ else:
 					rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
 				rvs_file.close()
 
-			#fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
-			#rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
 
-			
 			
 
 

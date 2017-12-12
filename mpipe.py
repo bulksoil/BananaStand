@@ -35,7 +35,7 @@ print "Writing results to " + groupFile
 os.system(dm_arg)
 
 if pipeline.lower() == "dada2":
-	sys.exit("Done")
+	sys.exit("\nDone")
 
 ## Grouping Read1
 #r1_name = re.sub('\.f.*', '', read1)
@@ -82,7 +82,7 @@ print '[STATUS] Executing argument "' + clean_up_arg + '"'
 print 'Writing results to ' + final_seqs
 os.system(clean_up_arg)
 
-
+print "\nDone"
 
 	
 
