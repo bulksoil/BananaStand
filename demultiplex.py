@@ -153,10 +153,11 @@ else:
 	if not os.path.exists("RVS"):
 		os.makedirs("RVS")
 
+	fh = {}
+
 	while True:
 
-		fh = {}
-
+	
 		i1_dat = fq_read(i1)
 		i2_dat = fq_read(i2)
 		r1_dat = fq_read(r1)
@@ -184,9 +185,9 @@ else:
 			#	fwd_file = open("FWD/" + out_name, 'a')
 			#	rvs_file = open("RVS/" + out_name, 'a')
 
-			#if found % 100 == 0:
-			#	sys.stdout.write('%s\r' % found)
-    		#	sys.stdout.flush()
+			if found % 100 == 0:
+				sys.stdout.write('%s\r' % found)
+    			sys.stdout.flush()
 		
 			if sample in sample_counts:
 				sample_counts[sample] += 1
@@ -196,7 +197,6 @@ else:
 			groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
 
 			if sample in fh:
-				print "Appending"
 				with open("FWD/" + out_name, 'a') as fwd_file:
 					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
 				fwd_file.close()
@@ -206,7 +206,6 @@ else:
 				
 			else:
 				
-				print "Appending"
 				fh[sample] = 1
 				with open("FWD/" + out_name, 'w') as fwd_file:
 					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
