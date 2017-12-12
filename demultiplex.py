@@ -176,13 +176,13 @@ else:
 
 			out_name = sample + ".fastq"
 			
-			if not sample in fh:
-				fwd_file = open("FWD/" + out_name, 'w')
-				rvs_file = open("RVS/" + out_name, 'w')
-				fh[sample] = 1
-			else:
-				fwd_file = open("FWD/" + out_name, 'a')
-				rvs_file = open("RVS/" + out_name, 'a')
+			#if not sample in fh:
+			#	fwd_file = open("FWD/" + out_name, 'w')
+			#	rvs_file = open("RVS/" + out_name, 'w')
+			#	fh[sample] = 1
+			#else:
+			#	fwd_file = open("FWD/" + out_name, 'a')
+			#	rvs_file = open("RVS/" + out_name, 'a')
 
 			#if found % 100 == 0:
 			#	sys.stdout.write('%s\r' % found)
@@ -195,20 +195,23 @@ else:
 		
 			groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
 
-			if not sample in fh:
+			if sample in fh:
+				print "Appending"
+				with open("FWD/" + out_name, 'a') as fwd_file:
+					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
+				fwd_file.close()
+				with open("RVS/" + out_name, 'a') as rvs_file:
+					rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
+				rvs_file.close()
+				
+			else:
+				
 				print "Appending"
 				fh[sample] = 1
 				with open("FWD/" + out_name, 'w') as fwd_file:
 					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
 				fwd_file.close()
 				with open("RVS/" + out_name, 'w') as rvs_file:
-					rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
-				rvs_file.close()
-			else:
-				with open("FWD/" + out_name, 'a') as fwd_file:
-					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
-				fwd_file.close()
-				with open("RVS/" + out_name, 'a') as rvs_file:
 					rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
 				rvs_file.close()
 
