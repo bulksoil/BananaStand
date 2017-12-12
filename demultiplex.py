@@ -194,11 +194,28 @@ else:
 				sample_counts[sample] = 1
 		
 			groups.write(i1_dat['header'].split(" ")[0] + "\t" + sample + "\n")
-			fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
-			rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
 
-			fwd_file.close()
-			rvs_file.close()
+			if not sample in fh:
+				fh[sample] = 1
+				with open("FWD/" + out_name, 'w') as fwd_file:
+					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
+				fwd_file.close()
+				with open("RVS/" + out_name, 'w') as rvs_file:
+					rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
+				rvs_file.close()
+			else:
+				with open("FWD/" + out_name, 'a') as fwd_file:
+					fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
+				fwd_file.close()
+				with open("RVS/" + out_name, 'a') as rvs_file:
+					rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
+				rvs_file.close()
+
+			#fwd_file.write(r1_dat['header'] + "\n" + r1_dat['seq'] + "\n" + "+" + "\n" + r1_dat['qual'] + "\n")
+			#rvs_file.write(r2_dat['header'] + "\n" + r2_dat['seq'] + "\n" + "+" + "\n" + r2_dat['qual'] + "\n")
+
+			
+			
 
 
 for sample in sample_counts:
