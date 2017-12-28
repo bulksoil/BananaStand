@@ -16,9 +16,5 @@ Youre also gonna wanna go ahead and get that PandaSeq by [going over to their pa
 
 The next thing you want to do is make sure that you get these scripts into some directory that is in your path. It should be ready to go.
 
-# How to do a microbiome experiment (I mean, how I do a microbiome experiment)
-
-I will get around to updating this sometime in the future.
-
 # Citation
 If you decided to use these tools, we kindly ask that you cite the original work where it [originated](http://www.pnas.org/content/112/8/E911.abstract, "This was my first paper, homie"). We also ask that you cite [PandaSeq](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-13-31) - as this pipeline requires it to do its thing.
